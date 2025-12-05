@@ -7,7 +7,7 @@ const app = express();
 app.use(express.json());
 
 app.use(cors({
-  origin: ['http://localhost:5173', 'https://rcco-abogados-demo.grstechs.com'], // tu frontend
+  origin: ['http://localhost:5173', 'https://rcco-abogados-demo.grstechs.com', 'https://www.rccoabogados.com.mx'], // tu frontend
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type'],
 }));
