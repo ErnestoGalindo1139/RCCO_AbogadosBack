@@ -1,5 +1,6 @@
 import express from 'express';
 import usuariosEventoRoutes from './routes/usuariosEvento.routes.js';
+import emailsRoutes from './routes/emails.routes.js';
 import cors from 'cors';
 
 const app = express();
@@ -13,5 +14,6 @@ app.use(cors({
 }));
 
 app.use(usuariosEventoRoutes);
+app.use(emailsRoutes);
 
 export default app;
