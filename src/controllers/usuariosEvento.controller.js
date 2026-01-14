@@ -187,10 +187,14 @@ export const updateUsuarioEvento = async (req, res) => {
         sql.VarChar,
         toNullIfEmpty(req.body.nb_ApellidoMaterno)
       )
-      .input('nb_Empresa', sql.VarChar, toNullIfEmpty(req.body.Empresa))
-      .input('de_Celular', sql.VarChar, toNullIfEmpty(req.body.Celular))
-      .input('de_Correo', sql.NVarChar, toNullIfEmpty(req.body.Correo))
-      .input('de_Comentarios', sql.VarChar, toNullIfEmpty(req.body.Comentarios))
+      .input('nb_Empresa', sql.VarChar, toNullIfEmpty(req.body.nb_Empresa))
+      .input('de_Celular', sql.VarChar, toNullIfEmpty(req.body.de_Celular))
+      .input('de_Correo', sql.NVarChar, toNullIfEmpty(req.body.de_Correo))
+      .input(
+        'de_Comentarios',
+        sql.VarChar,
+        toNullIfEmpty(req.body.de_Comentarios)
+      )
       .execute('upU_UsuariosEvento');
 
     if (result.rowsAffected[0] === 0) {
