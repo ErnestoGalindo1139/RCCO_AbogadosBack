@@ -176,10 +176,16 @@ export const updateUsuarioEvento = async (req, res) => {
 
     const result = await request
       .input('id_UsuarioEvento', sql.Int, req.body.id_UsuarioEvento)
+      .input('nb_Nombre', sql.VarChar, toNullIfEmpty(req.body.nb_Nombre))
       .input(
-        'nb_NombreCompleto',
+        'nb_ApellidoPaterno',
         sql.VarChar,
-        toNullIfEmpty(req.body.NombreCompleto)
+        toNullIfEmpty(req.body.nb_ApellidoPaterno)
+      )
+      .input(
+        'nb_ApellidoMaterno',
+        sql.VarChar,
+        toNullIfEmpty(req.body.nb_ApellidoMaterno)
       )
       .input('nb_Empresa', sql.VarChar, toNullIfEmpty(req.body.Empresa))
       .input('de_Celular', sql.VarChar, toNullIfEmpty(req.body.Celular))
