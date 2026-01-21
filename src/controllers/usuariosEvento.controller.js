@@ -195,6 +195,12 @@ export const updateUsuarioEvento = async (req, res) => {
         sql.VarChar,
         toNullIfEmpty(req.body.de_Comentarios)
       )
+      .input('sn_UsuarioEspecial', sql.Bit, req.body.sn_UsuarioEspecial)
+      .input(
+        'nb_TipoUsuarioEspecial',
+        sql.VarChar,
+        toNullIfEmpty(req.body.nb_TipoUsuarioEspecial)
+      )
       .execute('upU_UsuariosEvento');
 
     if (result.rowsAffected[0] === 0) {

@@ -3,10 +3,9 @@
 -- Fecha: 04/12/2025
 -- Descripción: Lista todos los Usuarios del evento
 -- =============================================
-CREATE PROCEDURE [dbo].[upL_UsuariosEventos]
+ALTER PROCEDURE [dbo].[upL_UsuariosEvento]
 
-	@nb_Nombre		VARCHAR(MAX) = NULL,
-	@sn_Pagado		BIT = NULL
+	@sn_Activo		BIT = NULL
 
 AS
 BEGIN
@@ -23,16 +22,14 @@ BEGIN
 		u.fh_Registro,
 		u.fh_Pago,
 		u.sn_Pagado,
-		u.nu_Folio
-		u.sn_Activo
+		u.nu_Folio,
+		u.sn_Activo,
+		sn_UsuarioEspecial,
+		nb_TipoUsuarioEspecial
 	FROM
 		UsuariosEvento u WITH (NOLOCK)
 	WHERE
-		(
-			@nb_Nombre IS NULL
-			OR u.@nb_Nombre LIKE '%' + @nb_Nombre + '%'
-		)
-		AND (@sn_Pagado IS NULL OR u.sn_Pagado = @sn_Pagado)
+		u.sn_Activo = 1
 	ORDER BY
 		id_UsuarioEvento
 
