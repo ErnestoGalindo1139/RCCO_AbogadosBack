@@ -19,7 +19,8 @@
     "express": "^4.19.2",
     "morgan": "^1.10.0",
     "mssql": "^11.0.1",
-    "nodemailer": "^7.0.11"
+    "nodemailer": "^7.0.11",
+    "xlsx-populate": "^1.21.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.10.0",
