@@ -285,3 +285,43 @@ export const toggleUsuarioEvento = async (req, res) => {
     });
   }
 };
+
+// ===============================
+// 🔍 BUSCAR USUARIOS EVENTO (VERIFICADOR)
+// ===============================
+export const verificarUsuariosEvento = async (req, res) => {
+  try {
+    const pool = await getConnection();
+
+    const result = await pool
+      .request()
+      .input('nu_Folio', sql.NVarChar, toNullIfEmpty(req.body.nu_Folio))
+      .input('nb_Nombre', sql.VarChar, toNullIfEmpty(req.body.nb_Nombre))
+      .input(
+        'nb_ApellidoPaterno',
+        sql.VarChar,
+        toNullIfEmpty(req.body.nb_ApellidoPaterno)
+      )
+      .input(
+        'nb_ApellidoMaterno',
+        sql.VarChar,
+        toNullIfEmpty(req.body.nb_ApellidoMaterno)
+      )
+      .input('nb_Empresa', sql.VarChar, toNullIfEmpty(req.body.nb_Empresa))
+      .execute('upL_UsuariosEvento_Verificar');
+
+    return res.json({
+      success: true,
+      message: 'Búsqueda realizada correctamente',
+      body: result.recordset,
+    });
+  } catch (error) {
+    console.error('🛑 Error buscarUsuariosEvento:', error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+      body: [],
+    });
+  }
+};

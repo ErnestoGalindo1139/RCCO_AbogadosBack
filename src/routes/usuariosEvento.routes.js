@@ -5,6 +5,7 @@ import {
   actualizarPagoUsuarioEvento,
   updateUsuarioEvento,
   toggleUsuarioEvento,
+  verificarUsuariosEvento,
 } from '../controllers/usuariosEvento.controller.js';
 
 const router = Router();
@@ -33,5 +34,10 @@ router.post('/updateUsuarioEvento', updateUsuarioEvento);
 // 🗑 ACTIVAR / DESACTIVAR USUARIO EVENTO (SOFT DELETE)
 // ===============================
 router.post('/toggleUsuarioEvento', toggleUsuarioEvento);
+
+// ===============================
+// 🔍 BUSCAR USUARIOS EVENTO (VERIFICADOR)
+// ===============================
+router.post('/usuariosEvento/buscar', verificarUsuariosEvento);
 
 export default router;
