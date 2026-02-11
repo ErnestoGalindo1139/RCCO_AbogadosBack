@@ -1,5 +1,6 @@
 import express from 'express';
 import usuariosEventoRoutes from './routes/usuariosEvento.routes.js';
+import encuestaRoutes from './routes/encuesta.routes.js';
 import reporteRoutes from './routes/reportes.routes.js';
 import emailsRoutes from './routes/emails.routes.js';
 import materialesRoutes from './routes/materiales.routes.js';
@@ -22,6 +23,7 @@ app.use(
 );
 
 app.use(usuariosEventoRoutes);
+app.use(encuestaRoutes);
 app.use(materialesRoutes);
 app.use(reporteRoutes);
 app.use(emailsRoutes);
