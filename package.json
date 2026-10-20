@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon src/index.js",
+    "whatsapp:test": "node src/whatsapp-test.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint .",
     "prepare": "husky install"

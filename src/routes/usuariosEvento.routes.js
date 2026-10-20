@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { registerSimposio } from '../controllers/registroSimposio.controller.js';
 import {
   getUsuariosEvento,
   createUsuariosEvento,
@@ -9,6 +10,8 @@ import {
 } from '../controllers/usuariosEvento.controller.js';
 
 const router = Router();
+
+router.post('/registroSimposio', registerSimposio);
 
 // ===============================
 // LISTAR USUARIOS EVENTO

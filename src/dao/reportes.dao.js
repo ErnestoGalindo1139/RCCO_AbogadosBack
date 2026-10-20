@@ -1,3 +1,7 @@
+import {
+  filterEventRows,
+  visibleEventComments,
+} from '../services/event-edition.service.js';
 import { getConnection, sql } from '../database/connection.js';
 import XlsxPopulate from 'xlsx-populate';
 
@@ -35,7 +39,7 @@ export const generarExcelUsuariosDAO = async (filtros) => {
       .input('nb_Empresa', sql.VarChar(200), filtros?.nb_Empresa ?? null)
       .execute('upL_UsuariosEvento_EXCEL');
 
-    const rows = result.recordset;
+    const rows = filterEventRows(result.recordset, filtros);
 
     if (!rows || rows.length === 0) {
       throw new Error('No se encontraron usuarios.');
@@ -64,6 +68,8 @@ export const generarExcelUsuariosDAO = async (filtros) => {
       'Fecha Registro',
       'Usuario Especial',
       'Tipo Usuario Especial',
+      'Año del evento',
+      'Edición',
     ];
 
     headers.forEach((h, i) => {
@@ -87,7 +93,7 @@ export const generarExcelUsuariosDAO = async (filtros) => {
     // ============================
     // WRAP TEXTO (SOLO TEXTO)
     // ============================
-    sheet.range(`A2:L${rows.length + 1}`).style({
+    sheet.range(`A2:N${rows.length + 1}`).style({
       wrapText: true,
       verticalAlignment: 'center',
     });
@@ -105,13 +111,15 @@ export const generarExcelUsuariosDAO = async (filtros) => {
       sheet.cell(row, 5).value(m.sn_Pagado ? 'PAGADO' : 'NO PAGADO');
       sheet.cell(row, 6).value(m.de_Celular);
       sheet.cell(row, 7).value(m.de_Correo);
-      sheet.cell(row, 8).value(m.de_Comentarios ?? '');
+      sheet.cell(row, 8).value(visibleEventComments(m.de_Comentarios));
       sheet.cell(row, 9).value(m.nu_Folio);
       sheet
         .cell(row, 10)
         .value(m.fh_Registro ? formatFechaSinZona(m.fh_Registro) : '');
       sheet.cell(row, 11).value(m.sn_UsuarioEspecial ? 'SÍ' : 'NO');
       sheet.cell(row, 12).value(m.nb_TipoUsuarioEspecial ?? '');
+      sheet.cell(row, 13).value(m.nu_AnioEvento ?? 'Sin clasificar');
+      sheet.cell(row, 14).value(m.nu_EdicionEvento ?? 'Sin asignar');
     });
 
     // ============================

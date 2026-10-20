@@ -1,4 +1,5 @@
 import express from 'express';
+import whatsappRoutes from './routes/whatsapp.routes.js';
 import usuariosEventoRoutes from './routes/usuariosEvento.routes.js';
 import encuestaRoutes from './routes/encuesta.routes.js';
 import reporteRoutes from './routes/reportes.routes.js';
@@ -7,6 +8,8 @@ import materialesRoutes from './routes/materiales.routes.js';
 import cors from 'cors';
 
 const app = express();
+
+app.use(whatsappRoutes);
 
 app.use(express.json());
 

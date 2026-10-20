@@ -1,3 +1,4 @@
+import { filterEventRows } from '../services/event-edition.service.js';
 import { getConnection } from '../database/connection.js';
 import sql from 'mssql';
 
@@ -13,7 +14,7 @@ export const getUsuariosEvento = async (req, res) => {
     // Ejecutar la primera consulta para obtener los clientes
     const usuariosResult = await pool
       .request()
-      .input('sn_Activo', sql.Int, toNullIfEmpty(req.body.sn_Activo))
+      .input('sn_Activo', sql.Int, toNullIfEmpty(req.body?.sn_Activo))
       .execute('upL_UsuariosEvento');
 
     // Verificar si no se encontraron clientes
@@ -28,7 +29,7 @@ export const getUsuariosEvento = async (req, res) => {
     res.json({
       success: true,
       message: 'Usuarios registrados encontrados',
-      body: usuariosResult.recordset,
+      body: filterEventRows(usuariosResult.recordset, req.query),
     });
   } catch (error) {
     console.error('Error al recuperar Usuarios Registrados:', error);
