@@ -1,60 +1,54 @@
-import 'dotenv/config';
+﻿import 'dotenv/config';
 
-export const sendWhatsAppTemplate = async ({ to, parameters }) => {
-  const token = process.env.WHATSAPP_ACCESS_TOKEN;
-  const phoneId = process.env.WHATSAPP_PHONE_NUMBER_ID;
+export const sendWhatsAppTemplate = async ({ to, parameters, externalId }) => {
+  const apiKey = process.env.YCLOUD_API_KEY;
+  const from = process.env.YCLOUD_WHATSAPP_FROM;
   const template = process.env.WHATSAPP_TEMPLATE_NAME;
-  if (!token || !phoneId || !template) {
+  const language = process.env.WHATSAPP_TEMPLATE_LANGUAGE;
+  if (!apiKey || !from || !template || !language)
     throw new Error(
-      'Configura WHATSAPP_ACCESS_TOKEN, WHATSAPP_PHONE_NUMBER_ID y WHATSAPP_TEMPLATE_NAME'
+      'Configura YCLOUD_API_KEY, YCLOUD_WHATSAPP_FROM, WHATSAPP_TEMPLATE_NAME y WHATSAPP_TEMPLATE_LANGUAGE'
     );
-  }
-  if (!/^\d{8,15}$/.test(to)) {
-    throw new Error(
-      'El destinatario debe incluir código de país y solo dígitos'
-    );
-  }
-  if (!/^\d+$/.test(phoneId))
-    throw new Error('Identificador de teléfono inválido');
-  const response = await fetch(
-    `https://graph.facebook.com/${process.env.WHATSAPP_API_VERSION || 'v25.0'}/${phoneId}/messages`,
-    {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
+  const recipient = '+' + String(to).replace(/^\+/, '');
+  if (!/^\+[1-9]\d{7,14}$/.test(recipient))
+    throw new Error('El destinatario debe incluir código de país');
+  if (!/^\+[1-9]\d{7,14}$/.test(from))
+    throw new Error('YCLOUD_WHATSAPP_FROM debe tener formato E.164');
+  if (!Array.isArray(parameters))
+    throw new Error('Parámetros de plantilla inválidos');
+  const response = await fetch('https://api.ycloud.com/v2/whatsapp/messages', {
+    method: 'POST',
+    headers: { 'X-API-Key': apiKey, 'Content-Type': 'application/json' },
+    signal: AbortSignal.timeout(15000),
+    body: JSON.stringify({
+      from,
+      to: recipient,
+      type: 'template',
+      ...(externalId ? { externalId: String(externalId) } : {}),
+      template: {
+        name: template,
+        language: { code: language },
+        ...(parameters.length
+          ? {
+              components: [
+                {
+                  type: 'body',
+                  parameters: parameters.map((text) => ({
+                    type: 'text',
+                    text: String(text),
+                  })),
+                },
+              ],
+            }
+          : {}),
       },
-      signal: AbortSignal.timeout(15000),
-      body: JSON.stringify({
-        messaging_product: 'whatsapp',
-        to,
-        type: 'template',
-        template: {
-          name: template,
-          language: { code: process.env.WHATSAPP_TEMPLATE_LANGUAGE || 'en_US' },
-          components: [
-            {
-              type: 'body',
-              parameters: parameters.map((text) => ({
-                type: 'text',
-                text: String(text),
-              })),
-            },
-          ],
-        },
-      }),
-    }
-  );
-  const data = await response.json();
-  if (!response.ok || !data.messages?.[0]?.id) {
-    // Do not expose access tokens or participant data in logs.
-    throw new Error(
-      `Meta rechazó el envío (HTTP ${response.status}, código ${data.error?.code || 'desconocido'})`
-    );
-  }
-  return {
-    messageId: data.messages[0].id,
-    // Preserve Meta's actual status; some responses omit this field entirely.
-    providerStatus: data.messages[0].message_status || null,
-  };
+    }),
+  });
+  // Do not expose the response body, credentials or participant data in errors.
+  const data = await response.json().catch(() => null);
+  if (!response.ok || typeof data?.id !== 'string' || !data.id)
+    throw new Error('YCloud no aceptó el envío (HTTP ' + response.status + ')');
+  if (data.status === 'failed')
+    throw new Error('YCloud reportó un envío fallido');
+  return { messageId: data.id, providerStatus: data.status || null };
 };

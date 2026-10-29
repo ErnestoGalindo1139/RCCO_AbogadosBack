@@ -50,7 +50,7 @@ export const validateEventRegistration = (body) => {
 
 // Sending is deliberately after persistence: a provider error must not lose the registration.
 export const createEventRegistrationHandler =
-  ({ save, send, paymentInstructions }) =>
+  ({ save, send }) =>
   async (req, res) => {
     let values;
     try {
@@ -72,7 +72,8 @@ export const createEventRegistrationHandler =
     try {
       const result = await send({
         to: values.de_Celular,
-        parameters: [values.nb_Nombre, saved.nu_Folio, paymentInstructions()],
+        externalId: `simposio:${saved.id_UsuarioEvento}`,
+        parameters: [values.nb_Nombre, saved.nu_Folio],
       });
       whatsapp = {
         status: 'accepted', // Our acknowledgement of a successful send API request.

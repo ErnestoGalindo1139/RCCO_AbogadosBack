@@ -30,7 +30,4 @@ const save = async (values) => {
 export const registerSimposio = createEventRegistrationHandler({
   save,
   send: sendWhatsAppTemplate,
-  paymentInstructions: () =>
-    process.env.WHATSAPP_PAYMENT_INSTRUCTIONS?.trim() ||
-    'El equipo de RCCO Abogados se comunicará contigo para ayudarte con el proceso.',
 });
